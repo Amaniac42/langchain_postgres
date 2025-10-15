@@ -3,3 +3,5 @@ scrapper.ipynb
 octenv/
 ./python-version/
 ./install-pyenv-win.ps1/
+./client_side/direct.ipynb
+
