@@ -1,0 +1,10 @@
+psycopg 
+langchain-postgres
+langchain
+langchain-google-genai
+langchain-community
+langchain-postgres
+langchain-huggingface
+langgraph
+langgraph-postgres-store
+psycopg2-binary

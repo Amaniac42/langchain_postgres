@@ -1,0 +1,135 @@
+# This file uses new names and a new port (5433) to avoid all old conflicts.
+services:
+  # Changed service name to 'postgres'
+  postgres:
+    # This is the standard, stable image for Postgres 16 + pgvector
+    image: pgvector/pgvector:pg16
+    # Changed container name to 'pgvector-db'
+    container_name: pgvector-db
+    ports:
+      # THE CRITICAL CHANGE:
+      # We connect your computer's port 5433 to the container's port 5432.
+      # This avoids any conflicts on port 5432.
+      - "5433:5432"
+    environment:
+      # Changed user and password to be 100% new
+      POSTGRES_USER: 'test_user'
+      POSTGRES_PASSWORD: 'test_pass'
+      POSTGRES_DB: 'vectordb'
+    volumes:
+      # Changed volume name to 'pg-data' to ensure no old data is used
+      - pg-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  # Defines the new, clean volume
+  pg-data:
+    driver: local
+
+
+# services:
+#   db:
+#     # We've switched to the 'pgvector/pgvector' image, which is more standard.
+#     # This image includes PostgreSQL 16 and the pgvector extension.
+#     image: pgvector/pgvector:pg16
+#     container_name: postgres_with_pgvector
+#     ports:
+#       # Exposes the container's port 5432 to your host machine's port 5432
+#       - "5432:5432"
+#     environment:
+#       # Sets the default user and password for the database
+#       POSTGRES_USER: 'myuser'
+#       POSTGRES_PASSWORD: 'mypassword'
+#       POSTGRES_DB: 'vectordb'
+#     volumes:
+#       # This saves your database data, so it persists
+#       - postgres-data:/var/lib/postgresql/data
+#     restart: unless-stopped
+
+# volumes:
+#   postgres-data:
+#     driver: local
+
+
+
+# version: '3.9'
+
+# services:
+#   postgres:
+#     image: ankane/pgvector
+#     container_name: vector_postgres
+#     restart: always
+#     shm_size: 128mb
+#     environment:
+#       POSTGRES_PASSWORD: postgres123
+#       POSTGRES_USER: postgres
+#       POSTGRES_DB: vector_db
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   pgadmin:
+#     image: dpage/pgadmin4:latest
+#     container_name: vector_pgadmin
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: admin@vector.com
+#       PGADMIN_DEFAULT_PASSWORD: admin123
+#       PGADMIN_CONFIG_SERVER_MODE: 'False'
+#     ports:
+#       - "8080:80"
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     volumes:
+#       - pgadmin_data:/var/lib/pgadmin
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:80/misc/ping"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
+#   redis:
+#     image: redis:7-alpine
+#     container_name: vector_redis01
+#     restart: always
+#     ports:
+#       - "6379:6379"
+#     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+#     volumes:
+#       - redis_data:/data
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 5
+
+#   redisinsight:
+#     image: redis/redisinsight:latest
+#     container_name: vector_redisinsight01
+#     restart: always
+#     ports:
+#       - "8002:8001"
+#     depends_on:
+#       redis:
+#         condition: service_healthy
+#     volumes:
+#       - redisinsight_data:/db
+#     environment:
+#       REDISINSIGHT_HOST: 0.0.0.0
+#       REDISINSIGHT_PORT: 8001
+
+# volumes:
+#   postgres_data:
+#     driver: local
+#   pgadmin_data:
+#     driver: local
+#   redis_data:
+#     driver: local
+#   redisinsight_data:
+#     driver: local
